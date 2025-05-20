@@ -4,7 +4,7 @@
 // @match        https://www.grammatip.com/*
 // @grant        none
 // @version      1.8.2
-// @author       -
+// @author       emr09
 // @description  Adds mod menu, editable UI, Frie opgaver toggle, and logo image patch to base64.
 // ==/UserScript==
 

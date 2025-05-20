@@ -3,7 +3,7 @@
 // @namespace    Violentmonkey Scripts
 // @match        https://www.grammatip.com/*
 // @grant        none
-// @version      1.8
+// @version      1.8.1
 // @author       -
 // @description  Adds draggable mod menu, text editing, fullscreen username, and a toggle for Frie Opgaver that persists and works across devices.
 // ==/UserScript==
@@ -68,9 +68,7 @@
       <hr>
       <button id="show-user-info-mod" style="margin-bottom:10px;width:100%;">Show Username Full Screen</button>
       <button id="edit-text-mod" style="margin-bottom:10px;width:100%;">Edit Text</button>
-      <button id="toggle-frie-opgaver" style="width:100%;">
-        ${frieEnabled ? 'Disable' : 'Enable'} Frie Opgaver
-      </button>
+      <button id="toggle-frie-opgaver" style="width:100%;">${frieEnabled ? 'Disable' : 'Enable'} Frie Opgaver</button>
     `;
     document.body.appendChild(gui);
 
@@ -192,11 +190,13 @@
         document.getElementById('save-edit').onclick = () => {
           const newText = editor.querySelector('textarea').value;
           target.innerText = newText;
+          target.style.outline = ''; // Remove blue box
           editor.remove();
           gui.style.display = 'block';
         };
 
         document.getElementById('cancel-edit').onclick = () => {
+          target.style.outline = ''; // Remove blue box
           editor.remove();
           gui.style.display = 'block';
         };

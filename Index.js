@@ -1,11 +1,11 @@
 // ==UserScript==
-// @name         Grammatip Mod Menu + Enable/Disable Frie Opgaver (Persistent) + Logo Patch
+// @name         Grammatip Mod Menu (Full) + Enable/Disable Træn Selv + Text Editor + Logo Patch
 // @namespace    Violentmonkey Scripts
 // @match        https://www.grammatip.com/*
 // @grant        none
-// @version      1.8.3
+// @version      1.8.5
 // @author       emr09
-// @description  Adds mod menu, editable UI, Frie opgaver toggle, and logo image patch to base64.
+// @description  Adds full mod menu with Træn Selv toggle, editable UI, user info popup, remove mode, and base64 logo.
 // ==/UserScript==
 
 (function () {
@@ -13,57 +13,37 @@
 
   let frieEnabled = localStorage.getItem('frieEnabled') === 'true';
 
-  const base64Logo = "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjM0IiBoZWlnaHQ9IjM0Ij4KPHBhdGggZD0iTTAgMCBDMy42ODc1IDEuMzEyNSAzLjY4NzUgMS4zMTI1IDYgMyBDNi4zMyAzLjk5IDYuNjYgNC45OCA3IDYgQzUuMDk0MTc0NjMgNy44NDU4OTM3NiAzLjE3NjgxNjM5IDkuNjc2MjQ1ODggMS4yNSAxMS41IEMwLjcxMTE3MTg4IDEyLjAyNDY0ODQ0IDAuMTcyMzQzNzUgMTIuNTQ5Mjk2ODcgLTAuMzgyODEyNSAxMy4wODk4NDM3NSBDLTQuNTQ2ODc1IDE3IC00LjU0Njg3NSAxNyAtOSAxNyBDLTExLjc1IDE1LjUgLTExLjc1IDE1LjUgLTE0IDE0IEMtMTQgMTguMjcwNTM5MjcgLTExLjY5ODc0MDI4IDE5LjgyODk4MDE4IC05IDIzIEMtOSAyMy42NiAtOSAyNC4zMiAtOSAyNSBDLTYuNjQ5NjA1MDUgMjQuOTg5NTQxNDUgLTYuNjQ5NjA1MDUgMjQuOTg5NTQxNDUgLTQgMjQgQy0yLjI3MTM3ODMyIDIxLjg4MzY3NzMzIC0wLjg1OTcyNjcgMTkuOTI4MzYxOTEgMC41NjI1IDE3LjYyNSBDMi45ODAxMzEyOCAxMy44MDAyMTU0NSA1LjA5MjQ4MjA4IDEwLjQ2MzI0MjU5IDkgOCBDMTIuMTE4NDE2NzggMTIuNjc3NjI1MTcgMTEuNTg3NTE4MjcgMTcuNTIzNzQ5NDggMTEgMjMgQzguNTgwNjQ3MjQgMjguMDE3OTE2ODQgNS4wMDA4MjY5IDMxLjQ5OTU4NjU1IDAgMzQgQy01LjU1NTMxMjQ4IDM0LjUwNzI5NjUgLTEwLjQxODMwMjM2IDM0Ljc2MjYwNDIyIC0xNS41IDMyLjMxMjUgQy0yMi43NjMxMTE2NCAyNS41OTQxMjE3MyAtMjIuNzYzMTExNjQgMjUuNTk0MTIxNzMgLTIzLjIzODI4MTI1IDIwLjM5MDYyNSBDLTIzLjQ4NzM0NzU4IDkuODUxMTg2NTcgLTIzLjQ4NzM0NzU4IDkuODUxMTg2NTcgLTE5IDUgQy0xMi43ODgzOTAyNCAtMC40NzIxMzI0MSAtOC4xMzEyNTMwNiAtMC42MDQyNzgyNiAwIDAgWiAiIGZpbGw9IiM1OEEwNEEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIzLDApIi8+Cjwvc3ZnPgo="; // Replace this with your actual base64 content
+  const base64Logo = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjM0IiBoZWlnaHQ9IjM0Ij4KPHBhdGggZD0iTTAgMCBDMy42ODc1IDEuMzEyNSAzLjY4NzUgMS4zMTI1IDYgMyBDNi4zMyAzLjk5IDYuNjYgNC45OCA3IDYgQzUuMDk0MTc0NjMgNy44NDU4OTM3NiAzLjE3NjgxNjM5IDkuNjc2MjQ1ODggMS4yNSAxMS41IEMwLjcxMTE3MTg4IDEyLjAyNDY0ODQ0IDAuMTcyMzQzNzUgMTIuNTQ5Mjk2ODcgLTAuMzgyODEyNSAxMy4wODk4NDM3NSBDLTQuNTQ2ODc1IDE3IC00LjU0Njg3NSAxNyAtOSAxNyBDLTExLjc1IDE1LjUgLTExLjc1IDE1LjUgLTE0IDE0IEMtMTQgMTguMjcwNTM5MjcgLTExLjY5ODc0MDI4IDE5LjgyODk4MDE4IC05IDIzIEMtOSAyMy42NiAtOSAyNC4zMiAtOSAyNSBDLTYuNjQ5NjA1MDUgMjQuOTg5NTQxNDUgLTYuNjQ5NjA1MDUgMjQuOTg5NTQxNDUgLTQgMjQgQy0yLjI3MTM3ODMyIDIxLjg4MzY3NzMzIC0wLjg1OTcyNjcgMTkuOTI4MzYxOTEgMC41NjI1IDE3LjYyNSBDMi45ODAxMzEyOCAxMy44MDAyMTU0NSA1LjA5MjQ4MjA4IDEwLjQ2MzI0MjU5IDkgOCBDMTIuMTE4NDE2NzggMTIuNjc3NjI1MTcgMTEuNTg3NTE4MjcgMTcuNTIzNzQ5NDggMTEgMjMgQzguNTgwNjQ3MjQgMjguMDE3OTE2ODQgNS4wMDA4MjY5IDMxLjQ5OTU4NjU1IDAgMzQgQy01LjU1NTMxMjQ4IDM0LjUwNzI5NjUgLTEwLjQxODMwMjM2IDM0Ljc2MjYwNDIyIC0xNS41IDMyLjMxMjUgQy0yMi43NjMxMTE2NCAyNS41OTQxMjE3MyAtMjIuNzYzMTExNjQgMjUuNTk0MTIxNzMgLTIzLjIzODI4MTI1IDIwLjM5MDYyNSBDLTIzLjQ4NzM0NzU4IDkuODUxMTg2NTcgLTIzLjQ4NzM0NzU4IDkuODUxMTg2NTcgLTE5IDUgQy0xMi43ODgzOTAyNCAtMC40NzIxMzI0MSAtOC4xMzEyNTMwNiAtMC42MDQyNzgyNiAwIDAgWiAiIGZpbGw9IiM1OEEwNEEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIzLDApIi8+Cjwvc3ZnPgo=";
 
   function patchAssets() {
-  const base64Data = `data:image/svg+xml;base64,${base64Logo}`;
+    const picture = document.querySelector('picture');
+    if (picture) {
+      const source = picture.querySelector('source[srcset="/images/logo.svg"]');
+      if (source) source.srcset = base64Logo;
+      const img = picture.querySelector('img[src="/images/logo.png"]');
+      if (img) img.src = base64Logo;
+    }
 
-  // Replace <picture> logo
-  const picture = document.querySelector('picture');
-  if (picture) {
-    const source = picture.querySelector('source[srcset="/images/logo.svg"]');
-    if (source) {
-      source.srcset = base64Data;
+    let favicon = document.querySelector('link[rel="icon"]');
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      document.head.appendChild(favicon);
     }
-    const img = picture.querySelector('img[src="/images/logo.png"]');
-    if (img) {
-      img.src = base64Data;
-    }
+    favicon.href = base64Logo;
   }
 
-  // Replace favicon
-  let favicon = document.querySelector('link[rel="icon"]');
-  if (!favicon) {
-    favicon = document.createElement('link');
-    favicon.rel = 'icon';
-    document.head.appendChild(favicon);
+  function toggleFrieExercisesVisibility() {
+    const link = Array.from(document.querySelectorAll('a[href="/student/free-exercises"]'))
+      .find(a => a.textContent.includes("Træn selv"));
+    if (link) {
+      link.style.setProperty('display', frieEnabled ? 'inline-block' : 'none', 'important');
+    }
   }
-  favicon.href = base64Data;
-}
-  function replaceFaviconWithBase64(base64Data) {
-    const existingIcons = document.querySelectorAll('link[rel*="icon"]');
-    existingIcons.forEach(el => el.remove()); // Remove existing favicons
-
-    const newIcon = document.createElement('link');
-    newIcon.type = 'image/x-icon';
-    newIcon.rel = 'shortcut icon';
-    newIcon.href = `data:image/x-icon;base64,${base64Data}`;
-    document.head.appendChild(newIcon);
-}
-
-// Example call (replace with your actual base64 icon data)
-const myFaviconBase64 = 'AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAMAAAAAAAAAAAAAAAEA...';
-replaceFaviconWithBase64(myFaviconBase64);
-
-
 
   function removeUnwantedElements() {
-    patchAssets(); // ✅ Correct
-
-    const freeExercises = document.querySelector('a[href="/student/free-exercises"][title="Frie opgaver"]');
-    if (freeExercises) {
-      freeExercises.style.display = frieEnabled ? 'inline-block' : 'none';
-    }
+    patchAssets();
+    toggleFrieExercisesVisibility();
 
     const footerBar = document.querySelector('.footer-bar.footer-bar-inner.footer-bar-right.bottom');
     if (footerBar) footerBar.remove();
@@ -86,6 +66,25 @@ replaceFaviconWithBase64(myFaviconBase64);
       };
       headerSetting.appendChild(modMenu);
     }
+  }
+
+  function startRemoveStuffMode() {
+    alert("🧹 Remove Stuff Mode Enabled!\nClick anything to remove it.\nPress ESC to exit.");
+    const removeHandler = (e) => {
+      if (e.target.closest('#mod-menu-gui')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      e.target.remove();
+    };
+    const escHandler = (e) => {
+      if (e.key === 'Escape') {
+        document.removeEventListener('click', removeHandler, true);
+        document.removeEventListener('keydown', escHandler);
+        alert("✅ Remove Stuff Mode Disabled");
+      }
+    };
+    document.addEventListener('click', removeHandler, true);
+    document.addEventListener('keydown', escHandler);
   }
 
   function openModMenuGUI() {
@@ -114,7 +113,10 @@ replaceFaviconWithBase64(myFaviconBase64);
       <hr>
       <button id="show-user-info-mod" style="margin-bottom:10px;width:100%;">Show Username Full Screen</button>
       <button id="edit-text-mod" style="margin-bottom:10px;width:100%;">Edit Text</button>
-      <button id="toggle-frie-opgaver" style="width:100%;">${frieEnabled ? 'Disable' : 'Enable'} Frie Opgaver</button>
+      <button id="toggle-frie-opgaver" style="margin-bottom:10px;width:100%;">
+        ${frieEnabled ? 'Disable' : 'Enable'} Træn Selv
+      </button>
+      <button id="remove-stuff-mod" style="width:100%;">🧹 Remove Stuff</button>
     `;
     document.body.appendChild(gui);
 
@@ -136,6 +138,18 @@ replaceFaviconWithBase64(myFaviconBase64);
     };
 
     document.getElementById('close-mod-menu').onclick = () => gui.remove();
+
+    document.getElementById('toggle-frie-opgaver').onclick = function () {
+      frieEnabled = !frieEnabled;
+      localStorage.setItem('frieEnabled', frieEnabled.toString());
+      this.innerText = `${frieEnabled ? 'Disable' : 'Enable'} Træn Selv`;
+      toggleFrieExercisesVisibility();
+    };
+
+    document.getElementById('remove-stuff-mod').onclick = () => {
+      gui.remove();
+      startRemoveStuffMode();
+    };
 
     document.getElementById('show-user-info-mod').onclick = function () {
       const userInfo = document.querySelector('.user-info');
@@ -235,13 +249,13 @@ replaceFaviconWithBase64(myFaviconBase64);
         document.getElementById('save-edit').onclick = () => {
           const newText = editor.querySelector('textarea').value;
           target.innerText = newText;
-          target.style.outline = ''; // Remove blue box
+          target.style.outline = '';
           editor.remove();
           gui.style.display = 'block';
         };
 
         document.getElementById('cancel-edit').onclick = () => {
-          target.style.outline = ''; // Remove blue box
+          target.style.outline = '';
           editor.remove();
           gui.style.display = 'block';
         };
@@ -250,34 +264,6 @@ replaceFaviconWithBase64(myFaviconBase64);
       document.addEventListener('mouseover', mouseover);
       document.addEventListener('mouseout', mouseout);
       document.addEventListener('click', clickEdit, true);
-    };
-
-    document.getElementById('toggle-frie-opgaver').onclick = function () {
-      frieEnabled = !frieEnabled;
-      localStorage.setItem('frieEnabled', frieEnabled.toString());
-      this.innerText = `${frieEnabled ? 'Disable' : 'Enable'} Frie Opgaver`;
-
-      const existingLink = document.querySelector('a[href="/student/free-exercises"][title="Frie opgaver"]');
-
-      if (frieEnabled) {
-        if (existingLink) {
-          existingLink.style.display = 'inline-block';
-        } else {
-          const sidebar = document.querySelector('.sidebar .nav') || document.querySelector('.nav');
-          if (sidebar) {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = "/student/free-exercises";
-            a.title = "Frie opgaver";
-            a.innerText = "Frie opgaver";
-            a.style.display = 'inline-block';
-            li.appendChild(a);
-            sidebar.appendChild(li);
-          }
-        }
-      } else {
-        if (existingLink) existingLink.style.display = 'none';
-      }
     };
   }
 
